@@ -15,20 +15,31 @@ namespace TobeOS
             Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
 
             programs = new Programs.Program[] {
+                new Programs.CatProgram(),
+                new Programs.CdProgram(),
                 new Programs.EchoProgram(),
                 new Programs.LsProgram(),
+                new Programs.MkdirProgram(),
+                new Programs.ShutdownProgram(),
+                new Programs.TouchProgram(),
+                new Programs.ProgramsProgram(),
                 new Programs.VolumesProgram()
             };
         }
 
         protected override void Run()
         {
-            string workingDir = "0:";
-            //int lastErrorCode = -1;
+            var state = new KernelState
+            {
+                FileSystem = fileSystem,
+                LastExitCode = 0,
+                Programs = programs,
+                WorkingDirectory = "0:\\"
+            };
 
             while (true)
             {
-                Console.Write($"{workingDir}> ");
+                Console.Write($"{state.WorkingDirectory}> ");
                 var input = Console.ReadLine();
 
                 if (!string.IsNullOrWhiteSpace(input))
@@ -56,13 +67,21 @@ namespace TobeOS
 
                         for (int i = 0; i < cmd.Arguments.Length; i++)
                             args[i + 1] = cmd.Arguments[i];
+                        
 
-                        var state = new KernelState
+                        int exitCode;
+
+                        try
                         {
-                            FileSystem = fileSystem
-                        };
+                            exitCode = p.Run(state, args);
+                        }
+                        catch (Exception exc)
+                        {
+                            exitCode = 1;
+                            Console.WriteLine(exc.Message);
+                        }
 
-                        p.Run(state, args);
+                        state.LastExitCode = exitCode;
                     }
                 }
             }

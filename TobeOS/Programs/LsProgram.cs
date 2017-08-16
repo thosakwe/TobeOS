@@ -12,13 +12,26 @@ namespace TobeOS.Programs
 
         public override int Run(KernelState state, string[] arguments)
         {
+            String dir;
+
             if (arguments.Length < 2)
             {
-                Console.WriteLine("fatal error: not enough arguments");
-                return 1;
+                dir = state.WorkingDirectory;
+            }
+            else
+            {
+                dir = arguments[1];
             }
 
-            List(arguments[1]);
+            dir = FilePaths.Expand(FilePaths.GetAbsolute(FilePaths.Normalize(dir), state));
+
+            if (!Directory.Exists(dir))
+            {
+                Console.WriteLine($"fatal error: no such directory \"{dir}\"");
+                return 2;
+            }
+
+            List(dir);
             return 0;
         }
 
