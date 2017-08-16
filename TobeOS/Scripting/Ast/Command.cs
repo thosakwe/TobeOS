@@ -2,7 +2,7 @@
 
 namespace TobeOS.Scripting.Ast
 {
-    class Command
+    public class Command
     {
         private string[] mArguments;
         private string mExecutable;
@@ -14,12 +14,86 @@ namespace TobeOS.Scripting.Ast
 
         public string Executable { get { return mExecutable; } }
 
+        public Command()
+        {
+            mExecutable = "<none>";
+            mArguments = new string[0];
+        }
+
         public Command(string executable)
         {
             mExecutable = executable;
+            mArguments = new string[0];
         }
 
-        public static Command Parse(string str)
+        public Command(string executable, string[] arguments)
+        {
+            mExecutable = executable;
+            mArguments = arguments;
+        }
+
+        public virtual int Run(KernelState state, Programs.Program[] programs)
+        {
+            Programs.Program p = null;
+
+            foreach (var program in programs)
+            {
+                state.Debug($"Is program {program.GetName()} {Executable}...?");
+                if (program.GetName() == Executable)
+                {
+                    p = program;
+                    break;
+                }
+            }
+
+            if (p == null)
+            {
+                Console.WriteLine($"Unrecognized program: \"{Executable}\"");
+                return (int) ExitCodes.FAILURE;
+            }
+            else
+            {
+                state.Debug($"Running {Executable}...");
+                var args = new string[mArguments.Length + 1];
+                args[0] = Executable;
+
+                for (int i = 0; i < mArguments.Length; i++)
+                {
+                    args[i + 1] = mArguments[i];
+                    state.Debug($"  * {mArguments[i]}");
+                }
+                
+                try
+                {
+                   var code = p.Run(state, args);
+                    state.Debug($"Exited with {code}");
+                    return code;
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine(exc.Message);
+                    return (int)ExitCodes.FAILURE;
+                }
+            }
+        }
+
+        public static Command Parse(String str)
+        {
+            var tok = new Tokenizer(str);
+            tok.Scan();
+            var p = new Parser(tok);
+
+            if (p.Errors.Length != 0)
+            {
+                for (int i = 0; i < p.Errors.Length; i++)
+                    Console.WriteLine(p.Errors[i]);
+                return null;
+            }
+
+            return p.ParseCommand();
+        }
+
+        private static Command ParseOld(string str)
         {
             var split = ParseArguments(str);
             var cmd = new Command(split[0].Trim());
@@ -92,7 +166,7 @@ namespace TobeOS.Scripting.Ast
                     int start = scanner.Index;
                     int remaining = scanner.Remaining();
 
-                    if (remaining == 0) throw new FormatException($"Unterminated double-quote as position {scanner.Index}");
+                    if (remaining == 0) throw new FormatException($"Unterminated double-quote at position {scanner.Index}");
 
                     var b = new StringBuf();
                     bool terminated = false;
@@ -111,7 +185,7 @@ namespace TobeOS.Scripting.Ast
                     }
 
                     if (!terminated)
-                        throw new FormatException($"Unterminated double-quote as position {start}");
+                        throw new FormatException($"Unterminated double-quote at position {start}");
 
                     list.Add(b.Take());
                 }

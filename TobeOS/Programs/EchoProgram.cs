@@ -12,7 +12,7 @@ namespace TobeOS.Programs
         public override int Run(KernelState state, string[] arguments)
         {
             for (int i = 1; i < arguments.Length; i++)
-                Console.WriteLine(arguments[i]);
+                state.Io.Out.WriteLine(arguments[i]);
 
             return 0;
         }

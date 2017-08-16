@@ -12,11 +12,9 @@ namespace TobeOS.Programs
 
         public override int Run(KernelState state, string[] arguments)
         {
-            // TODO: Read input from stdin...
             if (arguments.Length < 2)
             {
-                Console.WriteLine("fatal error: no input file");
-                return 1;
+                return new EditProgram().Run(state, arguments);
             }
 
             for (int i = 1; i < arguments.Length; i++)
@@ -25,22 +23,19 @@ namespace TobeOS.Programs
 
                 if (!File.Exists(absolute))
                 {
-
-                    Console.WriteLine($"fatal error: no file \"{absolute}\" exists");
-
-                    // TODO: Constant exit codes
-                    return 2;
+                    state.Io.Err.WriteLine($"fatal error: no file \"{absolute}\" exists");
+                    return (int) ExitCodes.FILESYSTEM_ERROR;
                 }
             }
 
             for (int i = 1; i < arguments.Length; i++)
             {
                 var absolute = FilePaths.Expand(FilePaths.GetAbsolute(FilePaths.Normalize(arguments[i]), state));
-                Console.Write(File.ReadAllText(absolute));
+                state.Io.Out.Write(File.ReadAllText(absolute));
             }
 
-            Console.WriteLine();
-            return 0;
+            state.Io.Out.WriteLine();
+            return (int)ExitCodes.SUCCESS;
         }
     }
 }

@@ -16,20 +16,20 @@ namespace TobeOS.Programs
         {
             if (arguments.Length < 2)
             {
-                Console.WriteLine("fatal error: no input path");
-                return 1;
+                state.Io.Err.WriteLine("fatal error: no input path");
+                return (int)ExitCodes.FAILURE;
             }
 
             var absolute = FilePaths.Expand(FilePaths.GetAbsolute(FilePaths.Normalize(arguments[1]), state));
 
             if (!Directory.Exists(absolute))
             {
-                Console.WriteLine($"fatal error: no such directory \"{absolute}\"");
-                return 2;
+                state.Io.Err.WriteLine($"fatal error: no such directory \"{absolute}\"");
+                return (int)ExitCodes.FILESYSTEM_ERROR;
             }
 
             state.WorkingDirectory = absolute;
-            return 0;
+            return (int)ExitCodes.SUCCESS;
         }
     }
 }

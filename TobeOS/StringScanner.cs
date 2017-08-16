@@ -35,10 +35,25 @@ namespace TobeOS
         {
             return str[++index];
         }
-        
+
         public char Peek()
         {
             return str[index + 1];
+        }
+
+        public bool Scan(String needle)
+        {
+            if ((length - index - 1) < length)
+                return false;
+
+            for (int i = 0; i < needle.Length; i++)
+            {
+                if (str[index + i + 1] != needle[i])
+                    return false;
+            }
+
+            index += needle.Length;
+            return true;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace TobeOS.Programs
             foreach (var volume in state.FileSystem.GetVolumes())
                 Console.WriteLine(volume.mName);
 
-            return 0;
+            return (int)ExitCodes.SUCCESS;
         }
     }
 }

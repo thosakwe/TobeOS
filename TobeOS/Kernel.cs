@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.Common;
+using System;
 using TobeOS.Scripting.Ast;
 using Sys = Cosmos.System;
 
@@ -18,6 +19,8 @@ namespace TobeOS
                 new Programs.CatProgram(),
                 new Programs.CdProgram(),
                 new Programs.EchoProgram(),
+                new Programs.EditProgram(),
+                new Programs.FileProgram(),
                 new Programs.LsProgram(),
                 new Programs.MkdirProgram(),
                 new Programs.ShutdownProgram(),
@@ -31,6 +34,7 @@ namespace TobeOS
         {
             var state = new KernelState
             {
+                Debugger = mDebugger,
                 FileSystem = fileSystem,
                 LastExitCode = 0,
                 Programs = programs,
@@ -44,44 +48,31 @@ namespace TobeOS
 
                 if (!string.IsNullOrWhiteSpace(input))
                 {
+                    mDebugger.Send($"Input: {input}");
                     var cmd = Command.Parse(input);
-                    Programs.Program p = null;
-
-                    foreach (var program in programs)
+                    mDebugger.Send("parsed command");
+                    if (cmd != null)
                     {
-                        if (program.GetName() == cmd.Executable)
+                        mDebugger.Send("bEFORE IO");
+                        var io = state.Io = new ProcessIO
                         {
-                            p = program;
-                            break;
-                        }
-                    }
+                            In = new ConsoleStdin(),
+                            Out = new StringStdWriter(),
+                            Err = new StringStdWriter()
+                        };
 
-                    if (p == null)
-                    {
-                        Console.WriteLine($"Unrecognized program: \"{cmd.Executable}\"");
+
+                        mDebugger.Send("bEFORE RUN");
+                        state.LastExitCode = cmd.Run(state, programs);
+                        mDebugger.Send("AFTER IO");
+                        if (!io.Out.IsEmpty) Console.Write(new string(io.Out.GetContents()));
+                        if (!io.Err.IsEmpty) Console.Write(new string(io.Err.GetContents()));
+                        mDebugger.Send("bEFORE DISPPOSE");
+                        state.Io.Dispose();
                     }
                     else
                     {
-                        var args = new string[cmd.Arguments.Length + 1];
-                        args[0] = cmd.Executable;
-
-                        for (int i = 0; i < cmd.Arguments.Length; i++)
-                            args[i + 1] = cmd.Arguments[i];
-                        
-
-                        int exitCode;
-
-                        try
-                        {
-                            exitCode = p.Run(state, args);
-                        }
-                        catch (Exception exc)
-                        {
-                            exitCode = 1;
-                            Console.WriteLine(exc.Message);
-                        }
-
-                        state.LastExitCode = exitCode;
+                        Console.WriteLine($"Invalid command: \"{input}\"");
                     }
                 }
             }

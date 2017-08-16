@@ -27,24 +27,24 @@ namespace TobeOS.Programs
 
             if (!Directory.Exists(dir))
             {
-                Console.WriteLine($"fatal error: no such directory \"{dir}\"");
-                return 2;
+                state.Io.Err.WriteLine($"fatal error: no such directory \"{dir}\"");
+                return (int)ExitCodes.FILESYSTEM_ERROR;
             }
 
-            List(dir);
-            return 0;
+            List(state, dir);
+            return (int)ExitCodes.SUCCESS;
         }
 
-        private void List(string dir)
+        private void List(KernelState state, string dir)
         {
             foreach (string path in Directory.GetDirectories(dir))
             {
-                Console.WriteLine(path);
+                state.Io.Out.WriteLine(path);
             }
 
             foreach (string path in Directory.GetFiles(dir))
             {
-                Console.WriteLine(path);
+                state.Io.Out.WriteLine(path);
             }
         }
     }

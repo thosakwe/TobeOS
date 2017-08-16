@@ -34,21 +34,21 @@ namespace TobeOS.Programs
 
             if (help)
             {
-                Console.WriteLine("usage: shutdown [--help] [-h] [--reboot] [-r]");
-                Console.WriteLine("Options");
-                Console.WriteLine("  --help, -h:   Print this help information.");
-                Console.WriteLine("  --reboot, -r: Reboot the system.");
-                return 0;
+                state.Io.Out.WriteLine("usage: shutdown [--help] [-h] [--reboot] [-r]");
+                state.Io.Out.WriteLine("Options");
+                state.Io.Out.WriteLine("  --help, -h:   Print this help information.");
+                state.Io.Out.WriteLine("  --reboot, -r: Reboot the system.");
+                return (int)ExitCodes.SUCCESS;
             }
 
             if (reboot)
             {
                 Cosmos.System.Power.Reboot();
-                return 0;
+                return (int)ExitCodes.SUCCESS;
             }
 
-            Console.WriteLine("fatal error: COSMOS does not support ACPI, and thus shutdown is impossible.");
-            return 1;
+            state.Io.Err.WriteLine("fatal error: COSMOS does not support ACPI, and thus shutdown is impossible.");
+            return (int)ExitCodes.FAILURE;
         }
     }
 }

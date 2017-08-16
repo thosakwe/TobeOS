@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TobeOS
 {
-    public class StringBuf
+    public class StringBuf : IDisposable
     {
         private char[] data = new char[0];
         private int length = 0;
@@ -39,11 +39,28 @@ namespace TobeOS
             length = 0;
         }
 
+        public void Dispose()
+        {
+            Clear();
+        }
+
         public string Take()
         {
             var s = ToString();
             Clear();
             return s;
+        }
+
+        public char[] TakeCharArray()
+        {
+            var c = data;
+            Clear();
+            return c;
+        }
+
+        public char[] ToCharArray()
+        {
+            return data;
         }
 
         public override string ToString()

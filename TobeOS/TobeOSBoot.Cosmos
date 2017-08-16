@@ -84,6 +84,7 @@
     <Reference Include="Cosmos.System.Plugs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5ae71220097cb983" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Io\" />
     <Folder Include="Programs\" />
     <Folder Include="Scripting\" />
     <Folder Include="Scripting\Ast\" />

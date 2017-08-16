@@ -17,9 +17,9 @@ namespace TobeOS.Programs
         public override int Run(KernelState state, string[] arguments)
         {
             foreach (var program in state.Programs)
-                Console.WriteLine(program.GetName());
+                state.Io.Out.WriteLine(program.GetName());
 
-            return 0;
+            return (int)ExitCodes.SUCCESS;
         }
     }
 }

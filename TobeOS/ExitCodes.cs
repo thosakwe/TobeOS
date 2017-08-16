@@ -4,7 +4,10 @@ using System.Text;
 
 namespace TobeOS
 {
-    public class StringList : ArrayList<String>
+    public enum ExitCodes : int
     {
+        SUCCESS = 0,
+        FAILURE = 1,
+        FILESYSTEM_ERROR = 2
     }
 }

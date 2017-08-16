@@ -15,7 +15,7 @@ namespace TobeOS.Programs
         {
             if (arguments.Length < 2)
             {
-                Console.WriteLine("fatal error: no input path");
+                state.Io.Err.WriteLine("fatal error: no input path");
                 return 1;
             }
 
@@ -24,18 +24,18 @@ namespace TobeOS.Programs
 
             if (!Directory.Exists(dir))
             {
-                Console.WriteLine($"fatal error: no such directory \"{dir}\"");
-                return 1;
+                state.Io.Err.WriteLine($"fatal error: no such directory \"{dir}\"");
+                return (int)ExitCodes.FILESYSTEM_ERROR;
             }
 
             if (File.Exists(absolute))
             {
-                Console.WriteLine($"fatal error: file \"{absolute}\" already exists");
-                return 2;
+                state.Io.Err.WriteLine($"fatal error: file \"{absolute}\" already exists");
+                return (int)ExitCodes.FILESYSTEM_ERROR;
             }
 
             File.Create(absolute).Dispose();
-            return 0;
+            return (int)ExitCodes.SUCCESS;
         }
     }
 }

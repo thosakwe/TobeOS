@@ -30,8 +30,8 @@ namespace TobeOS.Programs
 
             if (list.Length == 0)
             {
-                Console.WriteLine("fatal error: no input path");
-                return 1;
+                state.Io.Err.WriteLine("fatal error: no input path");
+                return (int)ExitCodes.FAILURE;
             }
 
             foreach (var path in list.Array)
@@ -43,14 +43,14 @@ namespace TobeOS.Programs
                 {
                     if (!p)
                     {
-                        Console.WriteLine($"fatal error: directory \"{absolute}\" already exists");
-                        return 2;
+                        state.Io.Err.WriteLine($"fatal error: directory \"{absolute}\" already exists");
+                        return (int)ExitCodes.FILESYSTEM_ERROR;
                     }
                 }
                 else Directory.CreateDirectory(absolute);
             }
 
-            return 0;
+            return (int)ExitCodes.SUCCESS;
         }
     }
 }
