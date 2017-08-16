@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using TobeOS.Scripting.Ast;
 using Sys = Cosmos.System;
 
@@ -24,7 +23,7 @@ namespace TobeOS
 
         protected override void Run()
         {
-            String workingDir = "0:";
+            string workingDir = "0:";
             //int lastErrorCode = -1;
 
             while (true)
@@ -32,7 +31,7 @@ namespace TobeOS
                 Console.Write($"{workingDir}> ");
                 var input = Console.ReadLine();
 
-                if (!String.IsNullOrWhiteSpace(input))
+                if (!string.IsNullOrWhiteSpace(input))
                 {
                     var cmd = Command.Parse(input);
                     Programs.Program p = null;
@@ -52,10 +51,10 @@ namespace TobeOS
                     }
                     else
                     {
-                        var args = new String[cmd.Arguments.Count + 1];
+                        var args = new string[cmd.Arguments.Length + 1];
                         args[0] = cmd.Executable;
 
-                        for (int i = 0; i < cmd.Arguments.Count; i++)
+                        for (int i = 0; i < cmd.Arguments.Length; i++)
                             args[i + 1] = cmd.Arguments[i];
 
                         var state = new KernelState

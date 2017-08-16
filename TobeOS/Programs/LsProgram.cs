@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace TobeOS.Programs
 {
@@ -24,7 +22,7 @@ namespace TobeOS.Programs
             return 0;
         }
 
-        private void List(String dir)
+        private void List(string dir)
         {
             foreach (string path in Directory.GetDirectories(dir))
             {

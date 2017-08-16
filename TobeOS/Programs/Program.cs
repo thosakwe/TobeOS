@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TobeOS.Programs
 {
     public abstract class Program
     {
-        public abstract int Run(KernelState state, String[] arguments);
+        public abstract int Run(KernelState state, string[] arguments);
 
-        public abstract String GetName();
+        public abstract string GetName();
     }
 }

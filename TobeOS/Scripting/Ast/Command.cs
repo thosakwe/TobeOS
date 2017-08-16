@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TobeOS.Scripting.Ast
 {
     class Command
     {
-        private List<String> mArguments = new List<string>();
+        private string[] mArguments;
         private String mExecutable;
 
-        public List<String> Arguments
+        public string[] Arguments
         {
             get { return mArguments; }
         }
@@ -25,9 +23,10 @@ namespace TobeOS.Scripting.Ast
         {
             var split = str.Split(' ');
             var cmd = new Command(split[0].Trim());
+            cmd.mArguments = new string[split.Length];
 
             for (int i = 1; i < split.Length; i++)
-                cmd.Arguments.Add(split[i].Trim());
+                cmd.mArguments[i - 1] = split[i];
 
             return cmd;
         }
